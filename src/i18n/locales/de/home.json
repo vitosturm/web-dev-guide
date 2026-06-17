@@ -1,0 +1,13 @@
+{
+  "badge": "Lernen durch Animation",
+  "heading1": "Web Dev",
+  "heading2": "Visual Guide",
+  "tagline": "Verstehe den Flow, beherrsche den Code. HTML, CSS, JavaScript, TypeScript, React, Next.js – animiert, erklärt, selbst gebaut.",
+  "groups": {
+    "markup-style": "MARKUP & STIL",
+    "programmierung": "PROGRAMMIERUNG",
+    "frameworks-web": "FRAMEWORKS & WEB",
+    "typescript": "TYPESCRIPT",
+    "tools": "WERKZEUGE"
+  }
+}

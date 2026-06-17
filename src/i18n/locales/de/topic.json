@@ -1,0 +1,19 @@
+{
+  "cheatSheet": "Spickzettel",
+  "playground": "Spielplatz",
+  "whatIs": "Was ist {{title}}?",
+  "howItWorks": "Wie es funktioniert",
+  "stepOf": "Schritt {{current}} von {{total}}",
+  "keyTakeaways": "Wichtigste Erkenntnisse",
+  "learnMore": "+ Mehr erfahren",
+  "showLess": "▲ Weniger anzeigen",
+  "commonErrors": "Häufige Fehler",
+  "realWorldExamples": "In der Praxis",
+  "analogy": "Analogie",
+  "stepLabel": "INFO",
+  "breadcrumbDocs": "Docs",
+  "topicProgress": "Thema {{pos}} von {{total}} in {{category}}",
+  "htmlReference": "HTML-Referenz",
+  "cssReference": "CSS-Referenz",
+  "playgroundSubtitle": "Direkt ausprobieren — Änderungen werden sofort angezeigt."
+}

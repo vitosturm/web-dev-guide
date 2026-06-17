@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic Viz — Vorschläge</title>
+<style>
+  :root {
+    --bg: #070913;
+    --surface: #0f1322;
+    --surface-bright: #1a2035;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8ecf3;
+    --muted: #6b7485;
+    --faint: #3a4055;
+    --accent: #2dd4bf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: system-ui,-apple-system,sans-serif; min-height: 100vh; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,9,19,0.94); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0;
+    padding: 0 24px; height: 52px;
+  }
+  .brand { font-size: 13px; font-weight: 700; color: var(--accent); margin-right: 28px; font-family: monospace; }
+  .tabs { display: flex; gap: 2px; flex-wrap: wrap; }
+  .tab {
+    padding: 6px 14px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    cursor: pointer; border: none; background: transparent;
+    transition: color .2s, background .2s;
+  }
+  .tab:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .tab.active { color: var(--text); background: rgba(255,255,255,0.09); }
+
+  .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 100px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .vheader { margin-bottom: 28px; }
+  .vbadge {
+    display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .08em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+    background: rgba(45,212,191,.12); color: var(--accent); border: 1px solid rgba(45,212,191,.25);
+    margin-bottom: 10px; font-family: monospace;
+  }
+  .vtitle { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+  .vdesc { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 640px; }
+  .vtag {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 16px; padding: 8px 14px; border-radius: 8px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    font-size: 12px; color: var(--muted); font-family: monospace;
+  }
+  .vtag .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+
+  .demo-frame {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 24px;
+  }
+  .demo-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--border);
+    font-size: 11px; font-family: monospace; color: var(--muted);
+  }
+  .demo-dots { display: flex; gap: 6px; }
+  .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .demo-body { padding: 32px; min-height: 320px; display: flex; align-items: center; justify-content: center; }
+  .demo-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-top: 1px solid var(--border);
+  }
+  .stepdots { display: flex; gap: 6px; align-items: center; }
+  .sdot {
+    height: 7px; border-radius: 4px; cursor: pointer; border: none; padding: 0;
+    transition: all .25s; background: var(--surface-bright);
+  }
+  .sdot.on { background: var(--accent); }
+  .nav-btns { display: flex; gap: 8px; }
+  .nav-btn {
+    padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface-bright);
+    color: var(--text); transition: background .15s, border-color .15s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); }
+  .nav-btn.primary { background: rgba(45,212,191,.15); border-color: rgba(45,212,191,.4); color: var(--accent); }
+  .nav-btn.primary:hover { background: rgba(45,212,191,.25); }
+
+  .vote-bar {
+    margin-top: 32px; padding: 18px 22px; border-radius: 12px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .vote-bar span { font-size: 13px; color: var(--muted); }
+  .vote-btn {
+    padding: 7px 18px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: 1px solid rgba(45,212,191,.3); background: rgba(45,212,191,.1);
+    color: var(--accent); transition: background .15s;
+  }
+  .vote-btn:hover { background: rgba(45,212,191,.22); }
+
+  /* ── VARIANT A — Current ── */
+  .a-box {
+    padding: 14px 18px; border-radius: 10px;
+    background: var(--surface-bright); border: 1px solid var(--border);
+    font-size: 13px; font-weight: 600; color: var(--muted); text-align: center;
+    transition: all .4s; flex: 1; min-width: 0;
+  }
+  .a-box.active { color: var(--text); border-color: var(--accent); background: rgba(45,212,191,.08); }
+  .a-box.lit { color: var(--text); }
+  .a-arrow { color: var(--faint); font-size: 20px; transition: color .4s; }
+  .a-arrow.active { color: var(--accent); }
+  .a-label { font-size: 11px; font-family: monospace; color: var(--faint); text-align: center; margin-top: 4px; transition: color .4s; }
+  .a-label.active { color: var(--accent); }
+
+  /* ── VARIANT B — Builder ── */
+  .b-area {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 20px; border-radius: 12px; margin-bottom: 10px;
+    border: 2px dashed var(--faint);
+    transition: all .5s cubic-bezier(.34,1.56,.64,1);
+    opacity: 0; transform: translateY(12px) scale(.97);
+  }
+  .b-area.visible { opacity: 1; transform: none; }
+  .b-area.active { border-style: solid; }
+  .b-icon { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .b-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .b-sub { font-size: 12px; color: var(--muted); font-family: monospace; }
+  .b-badge { font-size: 10px; font-family: monospace; padding: 3px 8px; border-radius: 4px; font-weight: 700; flex-shrink: 0; }
+  .b-arrow-wrap { display: flex; justify-content: flex-start; padding-left: 38px; margin-bottom: 4px; }
+  .b-arrow-line {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-family: monospace; color: var(--faint);
+    transition: color .4s, opacity .4s; opacity: 0;
+  }
+  .b-arrow-line.visible { opacity: 1; }
+  .b-arrow-line.active { color: var(--accent); }
+
+  /* ── VARIANT C — Flow ── */
+  .c-flow { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr; align-items: center; width: 100%; }
+  .c-node { display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all .4s; }
+  .c-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+    background: var(--surface-bright); border: 2px solid var(--faint);
+    transition: all .4s cubic-bezier(.34,1.56,.64,1); flex-shrink: 0;
+  }
+  .c-node.active .c-circle { border-color: var(--accent); transform: scale(1.12); box-shadow: 0 0 24px rgba(45,212,191,.25); }
+  .c-node.done .c-circle { border-color: rgba(45,212,191,.4); background: rgba(45,212,191,.08); }
+  .c-node-label { font-size: 11px; font-weight: 700; font-family: monospace; color: var(--muted); text-align: center; transition: color .4s; }
+  .c-node.active .c-node-label { color: var(--accent); }
+  .c-node.done .c-node-label { color: rgba(45,212,191,.7); }
+  .c-arrow { display: flex; align-items: center; }
+  .c-line { width: 100%; height: 2px; position: relative; background: var(--faint); border-radius: 1px; transition: background .4s; overflow: visible; }
+  .c-line.active { background: var(--accent); }
+  .c-line::after { content:''; position:absolute; right:-6px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid var(--faint); transition:border-color .4s; }
+  .c-line.active::after { border-left-color: var(--accent); }
+  .c-fill { position:absolute; left:0; top:0; height:100%; background:var(--accent); border-radius:1px; transition:width .6s ease; width:0%; }
+  .c-fill.full { width:100%; }
+  .c-cmd {
+    margin-top: 24px; text-align: center; padding: 12px 20px; border-radius: 10px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    font-family: monospace; font-size: 13px; color: var(--muted); transition: all .4s;
+  }
+  .c-cmd .kw { color: #f472b6; }
+  .c-cmd .cmd { color: #60a5fa; }
+  .c-cmd .arg { color: var(--accent); }
+
+  /* ── VARIANT D — Spotlight ── */
+  .d-diagram { display: flex; align-items: stretch; gap: 0; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-bright); }
+  .d-col { flex: 1; padding: 20px 16px; text-align: center; position: relative; transition: background .5s, opacity .5s; border-right: 1px solid var(--border); }
+  .d-col:last-child { border-right: none; }
+  .d-col.dim { opacity: .25; }
+  .d-col.lit { background: rgba(45,212,191,.07); }
+  .d-col-icon { font-size: 30px; margin-bottom: 10px; }
+  .d-col-name { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .d-col-hint { font-size: 11px; color: var(--muted); font-family: monospace; }
+  .d-col-files { display: flex; flex-direction: column; gap: 5px; margin-top: 12px; }
+  .d-file { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); border-radius: 5px; padding: 4px 8px; font-size: 10px; font-family: monospace; color: var(--muted); transition: all .4s; }
+  .d-col.lit .d-file { color: var(--accent); border-color: rgba(45,212,191,.25); background: rgba(45,212,191,.06); }
+  .d-label { font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; padding: 2px 0; margin-bottom: 4px; color: var(--faint); transition: color .4s; }
+  .d-col.lit .d-label { color: var(--accent); }
+  .d-explain { margin-top: 24px; padding: 16px 20px; border-radius: 10px; background: rgba(45,212,191,.06); border: 1px solid rgba(45,212,191,.18); font-size: 13px; color: var(--muted); line-height: 1.6; min-height: 56px; transition: all .4s; }
+  .d-explain strong { color: var(--text); }
+
+  /* ── VARIANT E — Story Cards ── */
+  .e-slot { position: relative; min-height: 380px; width: 100%; }
+  .e-card {
+    width: 100%; border-radius: 16px; overflow: hidden;
+    background: var(--surface-bright); border: 1px solid var(--border);
+    transition: opacity .3s, transform .3s;
+    opacity: 0; transform: translateY(10px) scale(.98);
+    position: absolute; pointer-events: none;
+  }
+  .e-card.active { opacity: 1; transform: none; position: relative; pointer-events: auto; }
+  .e-card-visual { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 72px; position: relative; overflow: hidden; }
+  .e-card-body { padding: 22px 24px; }
+  .e-step-n { font-size: 10px; font-family: monospace; font-weight: 800; letter-spacing: .1em; margin-bottom: 8px; }
+  .e-card-title { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+  .e-card-text { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .e-card-code { margin-top: 14px; padding: 12px 14px; border-radius: 8px; background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.06); font-family: monospace; font-size: 12px; color: #a5f3fc; white-space: pre; }
+  .e-particle { position: absolute; border-radius: 50%; animation: float linear infinite; opacity: .25; pointer-events: none; }
+  @keyframes float { 0%{transform:translateY(0) scale(1);opacity:.25} 50%{opacity:.5} 100%{transform:translateY(-80px) scale(.6);opacity:0} }
+  code { background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-family:monospace; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">web-dev-guide</div>
+  <div class="tabs">
+    <button class="tab active" onclick="show('a',this)">A · Aktuell</button>
+    <button class="tab" onclick="show('b',this)">B · Builder</button>
+    <button class="tab" onclick="show('c',this)">C · Flow</button>
+    <button class="tab" onclick="show('d',this)">D · Spotlight</button>
+    <button class="tab" onclick="show('e',this)">E · Story Cards</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ══ A: CURRENT ══ -->
+  <div class="panel active" id="panel-a">
+    <div class="vheader">
+      <div class="vbadge">Variant A · Referenz</div>
+      <div class="vtitle">Aktueller Stil</div>
+      <div class="vdesc">Abstrakte Boxen mit Farb- und Opacity-Übergängen. Funktioniert, aber wenig visuell — der Nutzer muss selbst mentale Modelle aufbauen.</div>
+      <div class="vtag"><div class="dot" style="background:#f59e0b"></div>Benchmark — was wir verbessern wollen</div>
+    </div>
+    <div class="demo-frame">
+      <div class="demo-topbar">
+        <div class="demo-dots"><div class="demo-dot" style="background:#ff5f57"></div><div class="demo-dot" style="background:#febc2e"></div><div class="demo-dot" style="background:#28c840"></div></div>
+        <span>How Git Works — Step <span id="a-step-n">1</span> / 4</span>
+        <span style="opacity:.4">topic-viz</span>
+      </div>
+      <div class="demo-body">
+        <div style="display:flex;flex-direction:column;gap:14px;width:100%">
+          <div style="display:flex;gap:12px;align-items:center;justify-content:center">
+            <div style="text-align:center;flex:1"><div class="a-box" id="a0">📁 Working Dir</div><div class="a-label" id="al0">deine Dateien</div></div>
+            <div class="a-arrow" id="aa0">→</div>
+            <div style="text-align:center;flex:1"><div class="a-box" id="a1">📦 Staging</div><div class="a-label" id="al1">git add</div></div>
+            <div class="a-arrow" id="aa1">→</div>
+            <div style="text-align:center;flex:1"><div class="a-box" id="a2">🗄️ Local Repo</div><div class="a-label" id="al2">git commit</div></div>
+            <div class="a-arrow" id="aa2">→</div>
+            <div style="text-align:center;flex:1"><div class="a-box" id="a3">☁️ Remote</div><div class="a-label" id="al3">git push</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="stepdots" id="a-dots"></div>
+        <div class="nav-btns">
+          <button class="nav-btn" onclick="aStep(-1)">← Zurück</button>
+          <button class="nav-btn primary" onclick="aStep(1)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+    <div class="vote-bar"><span>Feedback zu dieser Variante?</span><button class="vote-btn">✓ Diese Variante wählen</button></div>
+  </div>
+
+  <!-- ══ B: BUILDER ══ -->
+  <div class="panel" id="panel-b">
+    <div class="vheader">
+      <div class="vbadge">Variant B · Empfehlung</div>
+      <div class="vtitle">Builder — baut Schritt für Schritt auf</div>
+      <div class="vdesc">Jeder Klick fügt einen neuen Bereich hinzu. Das mentale Modell entsteht durch das visuelle Aufbauen — man sieht wie das System wächst, statt alles auf einmal zu lesen.</div>
+      <div class="vtag"><div class="dot"></div>Kein Hover nötig — jeder Klick erweitert das Bild</div>
+    </div>
+    <div class="demo-frame">
+      <div class="demo-topbar">
+        <div class="demo-dots"><div class="demo-dot" style="background:#ff5f57"></div><div class="demo-dot" style="background:#febc2e"></div><div class="demo-dot" style="background:#28c840"></div></div>
+        <span>How Git Works — Step <span id="b-step-n">1</span> / 4</span>
+        <span style="opacity:.4">topic-viz</span>
+      </div>
+      <div class="demo-body" style="align-items:flex-start;padding:24px 32px">
+        <div style="width:100%;max-width:500px;margin:0 auto">
+
+          <div class="b-area" id="b-area0" style="border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.06)">
+            <div class="b-icon" style="background:rgba(96,165,250,.12)">📁</div>
+            <div style="flex:1"><div class="b-name" style="color:#93c5fd">Working Directory</div><div class="b-sub">Deine lokalen Dateien · ungetrackt</div></div>
+            <div class="b-badge" style="background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.3)">Local</div>
+          </div>
+
+          <div class="b-arrow-wrap" id="b-aw0"><div class="b-arrow-line" id="b-line0">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M6 12l4 4 4-4"/></svg>
+            <span>git add .</span>
+          </div></div>
+
+          <div class="b-area" id="b-area1" style="border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.06)">
+            <div class="b-icon" style="background:rgba(251,191,36,.12)">📦</div>
+            <div style="flex:1"><div class="b-name" style="color:#fcd34d">Staging Area</div><div class="b-sub">Vorbereitete Änderungen · Index</div></div>
+            <div class="b-badge" style="background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.3)">Staged</div>
+          </div>
+
+          <div class="b-arrow-wrap" id="b-aw1"><div class="b-arrow-line" id="b-line1">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M6 12l4 4 4-4"/></svg>
+            <span>git commit -m "msg"</span>
+          </div></div>
+
+          <div class="b-area" id="b-area2" style="border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.06)">
+            <div class="b-icon" style="background:rgba(45,212,191,.12)">🗄️</div>
+            <div style="flex:1"><div class="b-name" style="color:#5eead4">Local Repository</div><div class="b-sub">Commit-History · .git/objects</div></div>
+            <div class="b-badge" style="background:rgba(45,212,191,.1);color:#2dd4bf;border:1px solid rgba(45,212,191,.3)">Committed</div>
+          </div>
+
+          <div class="b-arrow-wrap" id="b-aw2"><div class="b-arrow-line" id="b-line2">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M6 12l4 4 4-4"/></svg>
+            <span>git push origin main</span>
+          </div></div>
+
+          <div class="b-area" id="b-area3" style="border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.06)">
+            <div class="b-icon" style="background:rgba(167,139,250,.12)">☁️</div>
+            <div style="flex:1"><div class="b-name" style="color:#c4b5fd">Remote (GitHub)</div><div class="b-sub">Geteilt · Backup · für alle sichtbar</div></div>
+            <div class="b-badge" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.3)">Remote</div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="stepdots" id="b-dots"></div>
+        <div class="nav-btns">
+          <button class="nav-btn" onclick="bStep(-1)">← Zurück</button>
+          <button class="nav-btn primary" onclick="bStep(1)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+    <div class="vote-bar"><span>Feedback zu dieser Variante?</span><button class="vote-btn">✓ Diese Variante wählen</button></div>
+  </div>
+
+  <!-- ══ C: FLOW ══ -->
+  <div class="panel" id="panel-c">
+    <div class="vheader">
+      <div class="vbadge">Variant C</div>
+      <div class="vtitle">Flow — animierter Datenpfad</div>
+      <div class="vdesc">Alle Stationen sichtbar. Ein animierter Balken läuft von Node zu Node — wie ein Paket, das reist. Der aktive Befehl erscheint unten. Ideal für HTTP, Event Loop, Netzwerk-Topics.</div>
+      <div class="vtag"><div class="dot" style="background:#818cf8"></div>Ideal für Datenfluss- und Pipeline-Topics</div>
+    </div>
+    <div class="demo-frame">
+      <div class="demo-topbar">
+        <div class="demo-dots"><div class="demo-dot" style="background:#ff5f57"></div><div class="demo-dot" style="background:#febc2e"></div><div class="demo-dot" style="background:#28c840"></div></div>
+        <span>How Git Works — Step <span id="c-step-n">1</span> / 4</span>
+        <span style="opacity:.4">topic-viz</span>
+      </div>
+      <div class="demo-body" style="flex-direction:column;gap:24px;padding:28px 24px;width:100%">
+        <div class="c-flow">
+          <div class="c-node" id="cn0"><div class="c-circle">📁</div><div class="c-node-label">Working<br>Dir</div></div>
+          <div class="c-arrow"><div class="c-line" id="cl0"><div class="c-fill" id="cf0"></div></div></div>
+          <div class="c-node" id="cn1"><div class="c-circle">📦</div><div class="c-node-label">Staging<br>Area</div></div>
+          <div class="c-arrow"><div class="c-line" id="cl1"><div class="c-fill" id="cf1"></div></div></div>
+          <div class="c-node" id="cn2"><div class="c-circle">🗄️</div><div class="c-node-label">Local<br>Repo</div></div>
+          <div class="c-arrow"><div class="c-line" id="cl2"><div class="c-fill" id="cf2"></div></div></div>
+          <div class="c-node" id="cn3"><div class="c-circle">☁️</div><div class="c-node-label">Remote</div></div>
+        </div>
+        <div class="c-cmd" id="c-cmd">
+          <span style="color:#f472b6">$</span> <span id="c-cmdtext" style="color:var(--muted)">wähle einen Schritt ↑</span>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="stepdots" id="c-dots"></div>
+        <div class="nav-btns">
+          <button class="nav-btn" onclick="cStep(-1)">← Zurück</button>
+          <button class="nav-btn primary" onclick="cStep(1)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+    <div class="vote-bar"><span>Feedback zu dieser Variante?</span><button class="vote-btn">✓ Diese Variante wählen</button></div>
+  </div>
+
+  <!-- ══ D: SPOTLIGHT ══ -->
+  <div class="panel" id="panel-d">
+    <div class="vheader">
+      <div class="vbadge">Variant D</div>
+      <div class="vtitle">Spotlight — Fokus wandert durch das Diagramm</div>
+      <div class="vdesc">Alle 4 Bereiche von Anfang an sichtbar — gibt Orientierung. Der Spotlight dimmt alles ab, außer dem aktuellen Teil. Erklärungs-Text erscheint unten. Reduziert kognitive Last.</div>
+      <div class="vtag"><div class="dot" style="background:#f472b6"></div>Gut wenn der Gesamtüberblick wichtig ist</div>
+    </div>
+    <div class="demo-frame">
+      <div class="demo-topbar">
+        <div class="demo-dots"><div class="demo-dot" style="background:#ff5f57"></div><div class="demo-dot" style="background:#febc2e"></div><div class="demo-dot" style="background:#28c840"></div></div>
+        <span>How Git Works — Step <span id="d-step-n">1</span> / 4</span>
+        <span style="opacity:.4">topic-viz</span>
+      </div>
+      <div class="demo-body" style="flex-direction:column;gap:18px;width:100%;align-items:stretch;padding:24px 20px">
+        <div class="d-diagram">
+          <div class="d-col" id="dc0">
+            <div class="d-label">01</div><div class="d-col-icon">📁</div>
+            <div class="d-col-name">Working Dir</div><div class="d-col-hint">deine Dateien</div>
+            <div class="d-col-files"><div class="d-file">index.html</div><div class="d-file">style.css</div><div class="d-file">app.js</div></div>
+          </div>
+          <div class="d-col" id="dc1">
+            <div class="d-label">02</div><div class="d-col-icon">📦</div>
+            <div class="d-col-name">Staging</div><div class="d-col-hint">git add</div>
+            <div class="d-col-files"><div class="d-file">index.html</div></div>
+          </div>
+          <div class="d-col" id="dc2">
+            <div class="d-label">03</div><div class="d-col-icon">🗄️</div>
+            <div class="d-col-name">Local Repo</div><div class="d-col-hint">git commit</div>
+            <div class="d-col-files"><div class="d-file">abc123f</div><div class="d-file">d4e5f6a</div></div>
+          </div>
+          <div class="d-col" id="dc3">
+            <div class="d-label">04</div><div class="d-col-icon">☁️</div>
+            <div class="d-col-name">Remote</div><div class="d-col-hint">git push</div>
+            <div class="d-col-files"><div class="d-file">main</div><div class="d-file">feature</div></div>
+          </div>
+        </div>
+        <div class="d-explain" id="d-explain">Klick auf <strong>Weiter</strong> um den Spotlight zu starten</div>
+      </div>
+      <div class="demo-controls">
+        <div class="stepdots" id="d-dots"></div>
+        <div class="nav-btns">
+          <button class="nav-btn" onclick="dStep(-1)">← Zurück</button>
+          <button class="nav-btn primary" onclick="dStep(1)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+    <div class="vote-bar"><span>Feedback zu dieser Variante?</span><button class="vote-btn">✓ Diese Variante wählen</button></div>
+  </div>
+
+  <!-- ══ E: STORY CARDS ══ -->
+  <div class="panel" id="panel-e">
+    <div class="vheader">
+      <div class="vbadge">Variant E</div>
+      <div class="vtitle">Story Cards — Bild + Text + Code in einer Karte</div>
+      <div class="vdesc">Jeder Schritt ist eine große Karte mit farbigem Visual-Header, kurzem Titel, Erklärungs-Text und Code-Snippet. Sehr bildlich, sehr klar. Fühlt sich an wie Lernen mit Flashcards.</div>
+      <div class="vtag"><div class="dot" style="background:#34d399"></div>Beste Lesbarkeit — ideal für Einsteiger und Mobile</div>
+    </div>
+    <div class="demo-frame">
+      <div class="demo-topbar">
+        <div class="demo-dots"><div class="demo-dot" style="background:#ff5f57"></div><div class="demo-dot" style="background:#febc2e"></div><div class="demo-dot" style="background:#28c840"></div></div>
+        <span>How Git Works — Step <span id="e-step-n">1</span> / 4</span>
+        <span style="opacity:.4">topic-viz</span>
+      </div>
+      <div class="demo-body" style="padding:24px;align-items:stretch;width:100%">
+        <div class="e-slot" id="e-slot">
+
+          <div class="e-card active" id="ec0">
+            <div class="e-card-visual" style="background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(96,165,250,.05))">
+              📁
+              <div class="e-particle" style="width:12px;height:12px;background:#60a5fa;left:15%;bottom:20%;animation-duration:3s"></div>
+              <div class="e-particle" style="width:8px;height:8px;background:#93c5fd;left:70%;bottom:10%;animation-duration:2.2s;animation-delay:.8s"></div>
+            </div>
+            <div class="e-card-body">
+              <div class="e-step-n" style="color:#60a5fa">SCHRITT 01 — WORKING DIRECTORY</div>
+              <div class="e-card-title">Hier beginnt alles</div>
+              <div class="e-card-text">Das Working Directory ist dein normaler Projektordner. Git sieht zwar alle Dateien, trackt aber noch nichts. Jede Änderung passiert zuerst hier — ganz normal wie in jedem anderen Ordner.</div>
+              <div class="e-card-code">$ ls
+index.html  style.css  app.js
+<span style="color:#6b7485"># unverändert — git weiß nichts davon</span></div>
+            </div>
+          </div>
+
+          <div class="e-card" id="ec1">
+            <div class="e-card-visual" style="background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(251,191,36,.05))">
+              📦
+              <div class="e-particle" style="width:10px;height:10px;background:#fbbf24;left:20%;bottom:15%;animation-duration:2.8s"></div>
+              <div class="e-particle" style="width:14px;height:14px;background:#fcd34d;left:65%;bottom:25%;animation-duration:3.5s;animation-delay:.5s"></div>
+            </div>
+            <div class="e-card-body">
+              <div class="e-step-n" style="color:#fbbf24">SCHRITT 02 — STAGING AREA</div>
+              <div class="e-card-title">Was kommt in den nächsten Commit?</div>
+              <div class="e-card-text">Mit <code>git add</code> packst du Dateien in die Staging Area. Nur diese landen im Commit — du kannst also gezielt wählen welche Änderungen zusammengehören.</div>
+              <div class="e-card-code">$ git add index.html
+$ git status
+<span style="color:#4ade80">Changes to be committed:</span>
+  modified: index.html</div>
+            </div>
+          </div>
+
+          <div class="e-card" id="ec2">
+            <div class="e-card-visual" style="background:linear-gradient(135deg,rgba(45,212,191,.2),rgba(45,212,191,.05))">
+              🗄️
+              <div class="e-particle" style="width:8px;height:8px;background:#2dd4bf;left:25%;bottom:20%;animation-duration:2.5s;animation-delay:.3s"></div>
+              <div class="e-particle" style="width:12px;height:12px;background:#5eead4;left:60%;bottom:30%;animation-duration:3.2s;animation-delay:1s"></div>
+            </div>
+            <div class="e-card-body">
+              <div class="e-step-n" style="color:#2dd4bf">SCHRITT 03 — LOCAL REPOSITORY</div>
+              <div class="e-card-title">Ein Schnappschuss für die Ewigkeit</div>
+              <div class="e-card-text">Der Commit speichert deinen Snapshot dauerhaft im lokalen Repository. Jeder Commit bekommt eine einzigartige ID — du kannst jederzeit zu einem alten Stand zurück.</div>
+              <div class="e-card-code">$ git commit -m "fix: nav layout"
+[main abc123f] fix: nav layout
+ 1 file changed, 3 insertions(+)</div>
+            </div>
+          </div>
+
+          <div class="e-card" id="ec3">
+            <div class="e-card-visual" style="background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(167,139,250,.05))">
+              ☁️
+              <div class="e-particle" style="width:16px;height:16px;background:#a78bfa;left:18%;bottom:20%;animation-duration:4s"></div>
+              <div class="e-particle" style="width:9px;height:9px;background:#c4b5fd;left:72%;bottom:15%;animation-duration:2.8s;animation-delay:.6s"></div>
+            </div>
+            <div class="e-card-body">
+              <div class="e-step-n" style="color:#a78bfa">SCHRITT 04 — REMOTE (GITHUB)</div>
+              <div class="e-card-title">Für alle sichtbar, sicher gesichert</div>
+              <div class="e-card-text">Mit <code>git push</code> überträgst du deine Commits zu GitHub. Teamkollegen können jetzt <code>git pull</code> machen um deinen Stand zu bekommen. Backup inklusive.</div>
+              <div class="e-card-code">$ git push origin main
+Enumerating objects: 5, done.
+<span style="color:#2dd4bf">✓</span> main → origin/main</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="stepdots" id="e-dots"></div>
+        <div class="nav-btns">
+          <button class="nav-btn" onclick="eStep(-1)">← Zurück</button>
+          <button class="nav-btn primary" onclick="eStep(1)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+    <div class="vote-bar"><span>Feedback zu dieser Variante?</span><button class="vote-btn">✓ Diese Variante wählen</button></div>
+  </div>
+
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  document.getElementById('panel-' + id).classList.add('active')
+  btn.classList.add('active')
+}
+
+function makeDots(id, n, current) {
+  const el = document.getElementById(id)
+  el.innerHTML = ''
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('button')
+    d.className = 'sdot' + (i === current ? ' on' : '')
+    d.style.width = i === current ? '22px' : '7px'
+    el.appendChild(d)
+  }
+}
+
+/* A */
+let aS = 0
+function aRender() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('a'+i).classList.toggle('active', i === aS)
+    document.getElementById('a'+i).classList.toggle('lit', i < aS)
+    document.getElementById('al'+i).classList.toggle('active', i === aS)
+    if (i < 3) document.getElementById('aa'+i).classList.toggle('active', i < aS)
+  }
+  document.getElementById('a-step-n').textContent = aS + 1
+  makeDots('a-dots', 4, aS)
+}
+function aStep(d) { aS = Math.max(0,Math.min(3,aS+d)); aRender() }
+aRender()
+
+/* B */
+let bS = 0
+function bRender() {
+  for (let i = 0; i < 4; i++) {
+    const a = document.getElementById('b-area'+i)
+    a.classList.toggle('visible', i <= bS)
+    a.classList.toggle('active', i === bS)
+    if (i < 3) {
+      const l = document.getElementById('b-line'+i)
+      if (l) { l.classList.toggle('visible', i < bS); l.classList.toggle('active', i === bS-1) }
+    }
+  }
+  document.getElementById('b-step-n').textContent = bS + 1
+  makeDots('b-dots', 4, bS)
+}
+function bStep(d) { bS = Math.max(0,Math.min(3,bS+d)); bRender() }
+bRender()
+
+/* C */
+let cS = 0
+const cCmds = [
+  '<span style="color:#f472b6">$</span> <span style="color:#60a5fa">git</span> <span style="color:#2dd4bf">status</span>   <span style="color:#6b7485"># sieh was sich geändert hat</span>',
+  '<span style="color:#f472b6">$</span> <span style="color:#60a5fa">git</span> <span style="color:#2dd4bf">add .</span>      <span style="color:#6b7485"># alle Änderungen stagen</span>',
+  '<span style="color:#f472b6">$</span> <span style="color:#60a5fa">git</span> <span style="color:#2dd4bf">commit</span> -m <span style="color:#fcd34d">"feat: new feature"</span>',
+  '<span style="color:#f472b6">$</span> <span style="color:#60a5fa">git</span> <span style="color:#2dd4bf">push</span> origin main  <span style="color:#4ade80"># ✓ gepusht!</span>',
+]
+function cRender() {
+  for (let i = 0; i < 4; i++) {
+    const n = document.getElementById('cn'+i)
+    n.classList.remove('active','done')
+    if (i < cS) n.classList.add('done')
+    if (i === cS) n.classList.add('active')
+  }
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('cf'+i).classList.toggle('full', i < cS)
+    document.getElementById('cl'+i).classList.toggle('active', i < cS)
+  }
+  document.getElementById('c-cmdtext').innerHTML = cCmds[cS]
+  document.getElementById('c-step-n').textContent = cS + 1
+  makeDots('c-dots', 4, cS)
+}
+function cStep(d) { cS = Math.max(0,Math.min(3,cS+d)); cRender() }
+cRender()
+
+/* D */
+let dS = -1
+const dExplains = [
+  '<strong>Working Directory</strong> — Hier passieren all deine Änderungen. Git überwacht den Ordner, aber macht noch nichts. Die Dateien sind "untracked" oder "modified".',
+  '<strong>Staging Area</strong> — Mit <code>git add</code> wählst du gezielt aus, was in den nächsten Commit kommt. Volle Kontrolle darüber was zusammengehört.',
+  '<strong>Local Repository</strong> — <code>git commit</code> erstellt einen unveränderlichen Schnappschuss. Läuft komplett offline — kein Internet nötig.',
+  '<strong>Remote (GitHub)</strong> — <code>git push</code> überträgt deine Commits. Alle Teammates können jetzt <code>git pull</code> machen um deinen Stand zu bekommen.',
+]
+function dRender() {
+  for (let i = 0; i < 4; i++) {
+    const c = document.getElementById('dc'+i)
+    c.classList.remove('dim','lit')
+    if (dS >= 0) { if (i === dS) c.classList.add('lit'); else c.classList.add('dim') }
+  }
+  document.getElementById('d-explain').innerHTML = dS >= 0 ? dExplains[dS] : 'Klick auf <strong>Weiter</strong> um den Spotlight zu starten'
+  document.getElementById('d-step-n').textContent = Math.max(1, dS+1)
+  makeDots('d-dots', 4, dS)
+}
+function dStep(d) { dS = Math.max(0,Math.min(3,dS+d)); dRender() }
+dRender()
+
+/* E */
+let eS = 0
+function eRender() {
+  for (let i = 0; i < 4; i++) document.getElementById('ec'+i).classList.toggle('active', i === eS)
+  document.getElementById('e-step-n').textContent = eS + 1
+  makeDots('e-dots', 4, eS)
+}
+function eStep(d) { eS = Math.max(0,Math.min(3,eS+d)); eRender() }
+eRender()
+</script>
+</body>
+</html>

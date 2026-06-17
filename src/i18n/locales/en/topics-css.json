@@ -1,0 +1,1543 @@
+{
+  "css-basics": {
+    "title": "How CSS Works",
+    "description": "Three ways to apply CSS and how the cascade resolves conflicts",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Browser defaults",
+        "text": "Without any CSS, browsers apply their own built-in styles — serif fonts, margins on headings, blue underlined links. Every stylesheet you write overrides these defaults. CSS resets address these inconsistencies; one non-obvious rule belongs in every reset: `input, button, textarea, select { font: inherit }` — form elements don't inherit the page font by default, causing them to render in a tiny system font and triggering unwanted auto-zoom on mobile when the font falls below 16px.",
+        "videoClip": "videos/css/css-overview-100s.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Inline styles",
+        "text": "Apply CSS directly on a single element using the style attribute. Inline styles have the highest specificity — they override external and internal stylesheets. Use only for truly one-off dynamic values (e.g. set by JavaScript).",
+        "videoClip": "videos/css/css-what-is.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Internal <style> tag",
+        "text": "Write CSS inside a <style> element in the <head>. Useful for single-page prototypes or HTML email templates. Not ideal for multi-page sites — styles must be duplicated in every file.",
+        "videoClip": "videos/css/css-what-is.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "External stylesheet",
+        "text": "Link a `.css` file using `<link>` in the `<head>`. Best practice for real projects — one file applies to every page, ensuring consistency. Change one file and every page updates. The browser caches the file after the first download, so returning visitors pay no network cost.",
+        "videoClip": "videos/css/css-5min-overview.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "The Cascade",
+        "text": "When multiple rules target the same element, the browser uses specificity to decide the winner. Higher specificity always wins. Equal specificity? The later rule in the source wins.",
+        "videoClip": "videos/css/css-5min-overview.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Inline style",
+          "note": "Highest specificity — avoid for general styling"
+        },
+        {
+          "label": "Internal <style>",
+          "note": "Single-file use only"
+        },
+        {
+          "label": "External <link>",
+          "note": "Best practice — use this"
+        },
+        {
+          "label": "Specificity order",
+          "note": "Higher wins; equal spec → later wins"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "CSS reset at top of external stylesheet"
+        }
+      ],
+      "whenToUse": "Always use an external stylesheet for real projects. Inline styles only for values set dynamically by JavaScript. Internal <style> for HTML email or single-file demos.",
+      "commonMistakes": [
+        "Overusing inline styles — highest specificity makes them hard to override later",
+        "Forgetting the cascade — if a style 'isn't working', check specificity: a class rule beats a type rule",
+        "!important breaks the cascade and leads to specificity wars — it's a last resort, not a default"
+      ]
+    }
+  },
+  "css-selectors": {
+    "title": "Selectors & Specificity",
+    "description": "Target elements precisely and understand which styles win",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Selectors target HTML elements",
+        "text": "CSS rules start with a selector that tells the browser exactly which elements to apply the following styles to. Selectors can target elements by tag name, class, ID, attribute, position in the tree, or current state — giving you precise control over which elements change. Choosing the right selector strategy is one of the most important decisions for keeping stylesheets maintainable as a project grows.",
+        "videoClip": "videos/css/css-selectors-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Universal selector *",
+        "text": "The `*` universal selector matches every single element on the page. It has zero specificity, so any class or type rule overrides it — making it safe for global resets like `*, *::before, *::after { box-sizing: border-box }`. Use it sparingly for targeted resets, not for general styling, as it applies to hundreds of elements simultaneously.",
+        "videoClip": "videos/css/css-selectors-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Type selectors",
+        "text": "Type selectors match elements purely by their HTML tag name — `h1`, `p`, `a`, `button`. Every instance of that element on the page receives the style, which is great for setting consistent baseline typography but risky for component-level styling since it can unintentionally affect elements across the whole page. Combine with a parent class to scope the effect: `.card p` styles only paragraphs inside a card.",
+        "videoClip": "videos/css/css-selectors-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Class selectors",
+        "text": "Class selectors start with a dot (`.card`, `.btn`) and are the main tool for reusable component styling — many different elements can share the same class, and one element can carry multiple classes at once. Name classes by what the element *is* semantically (`.primary-action`, `.card-title`) rather than what it looks like (`.blue`, `.bold`), so names stay meaningful when the design changes.",
+        "videoClip": "videos/css/css-selectors-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "Specificity — which rule wins",
+        "text": "When multiple rules target the same element, specificity determines the winner: ID > class/attribute/pseudo-class > type/pseudo-element. Higher specificity always wins regardless of source order. Equal specificity resolves by order — the later rule wins. Avoid deep nesting and IDs in CSS to keep specificity manageable.",
+        "videoClip": "videos/css/css-selectors-vid.mp4"
+      },
+      {
+        "animationStep": 5,
+        "heading": "Pseudo-classes — state-based targeting",
+        "text": "Pseudo-classes target elements based on their state or position. :hover fires when the mouse is over the element. :focus activates when a form field is focused. :nth-child(n) matches by position in a list.",
+        "videoClip": "videos/css/css-selectors-vid.mp4"
+      },
+      {
+        "animationStep": 6,
+        "heading": "Pseudo-elements — virtual sub-parts",
+        "text": "Pseudo-elements style a part of an element that doesn't exist in the HTML. ::before and ::after inject generated content. ::first-line and ::first-letter target text. Always use content: \"\" with ::before/::after.",
+        "videoClip": "videos/css/css-selectors-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Type",
+          "note": "All h1 elements"
+        },
+        {
+          "label": "Class",
+          "note": "class=\"card\""
+        },
+        {
+          "label": "ID",
+          "note": "id=\"main\" — unique per page"
+        },
+        {
+          "label": "Attribute",
+          "note": "Attribute matching"
+        },
+        {
+          "label": "Descendant / Child",
+          "note": "Nesting"
+        },
+        {
+          "label": "Pseudo-class",
+          "note": "State or position"
+        },
+        {
+          "label": "Pseudo-element",
+          "note": "Virtual sub-elements"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Specificity order (low → high)"
+        }
+      ],
+      "whenToUse": "Prefer class selectors for styling. Use ID selectors only as JavaScript hooks, not for CSS. Avoid over-qualifying selectors (div.card can just be .card).",
+      "commonMistakes": [
+        "Overusing !important — breaks the cascade and causes specificity wars",
+        "Using ID selectors for CSS — very high specificity makes them hard to override",
+        ".nav a matches ALL nested links; .nav > a only direct children — easy to confuse"
+      ]
+    }
+  },
+  "css-colors-units": {
+    "title": "Colors & Units",
+    "description": "Color formats (hex, rgb, hsl) and CSS units (px, em, rem, %)",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Named colors",
+        "text": "CSS has 140+ named colors like `red`, `tomato`, and `cornflowerblue`. They're useful for quick prototyping and learning, but limited — you can't adjust their brightness or saturation. For production designs, hex codes or HSL give precise control over any color. Named colors are browser-normalized, so `red` and `#ff0000` render identically.",
+        "videoClip": "videos/css/css-colors-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "HEX codes",
+        "text": "Six hex digits encode red, green, and blue channels: `#RRGGBB`. Each pair ranges from `00` (none) to `ff` (full), so `#ff0000` is pure red and `#ffffff` is white. Shorthand `#RGB` expands each digit — `#f0c` becomes `#ff00cc`. An optional fourth pair adds transparency: `#RRGGBBAA`.",
+        "videoClip": "videos/css/css-colors-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "RGB & RGBA",
+        "text": "`rgb()` takes three 0–255 values for red, green, blue. `rgba()` adds a fourth value (0–1) for transparency — great for overlays and tinted backgrounds. Modern CSS treats `rgb()` and `rgba()` as identical; you can write `rgb(0 0 0 / 50%)` with a slash instead of the comma-separated alpha. For quick adjustments, HSL is often easier to read than RGB.",
+        "videoClip": "videos/css/css-colors-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "HSL & HSLA",
+        "text": "`hsl()` uses Hue (0–360°), Saturation (%), and Lightness (%). Much more intuitive for creating color palettes — just shift the hue and keep saturation and lightness constant. Varying only lightness from 10% to 90% gives you the full tonal range of a single color, which is how frameworks like Tailwind generate their color scales.",
+        "videoClip": "videos/css/css-colors-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "CSS Units",
+        "text": "px is absolute. em is relative to the parent's font-size. rem is relative to the root <html> font-size (usually 16px). % is relative to the parent's size. Use rem for font sizes, px for borders, % for widths.",
+        "videoClip": "videos/css/css-colors-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "HEX",
+          "note": "Most common format"
+        },
+        {
+          "label": "RGB / RGBA",
+          "note": "Use rgba for transparency"
+        },
+        {
+          "label": "HSL / HSLA",
+          "note": "Best for palettes"
+        },
+        {
+          "label": "px",
+          "note": "Absolute, pixel-precise"
+        },
+        {
+          "label": "rem",
+          "note": "Relative to root — use for font & spacing"
+        },
+        {
+          "label": "em",
+          "note": "Relative to parent font-size"
+        },
+        {
+          "label": "%",
+          "note": "Relative to parent dimension"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "CSS custom properties for a color palette"
+        },
+        {
+          "title": "Responsive typography scale"
+        }
+      ],
+      "whenToUse": "Use rem for font sizes and spacing (scales with user preferences), px for borders and fine details, % for layout widths. Prefer HSL when building color systems — it's easy to create tints and shades by adjusting lightness.",
+      "commonMistakes": [
+        "Mixing em and rem unpredictably — em compounds through nested elements, rem doesn't. Use rem by default.",
+        "Using px for font sizes — it ignores user browser font-size preferences. Use rem instead.",
+        "Forgetting rgba for overlays — use rgba(0,0,0,0.5) not a semi-transparent gray hex."
+      ]
+    }
+  },
+  "css-box-model": {
+    "title": "CSS Box Model",
+    "description": "Every element is a box — content, padding, border, margin",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Content Box",
+        "text": "The content box is the innermost area where your text, images, and child elements actually render. By default, the CSS `width` and `height` properties size this inner area only — padding and border are added on top, making the visible element larger than declared. Setting `box-sizing: border-box` globally changes this so `width` includes padding and border, which is the universally preferred approach in modern CSS.",
+        "videoClip": "videos/css/css-box-model-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Padding",
+        "text": "Padding is the space between your content and the border — it is interior breathing room that belongs to the element. Because it is inside the border, padding inherits the element's background color, visually extending the colored area. Use shorthand to set all four sides at once: `padding: 16px` (all sides), `padding: 8px 16px` (top/bottom, left/right).",
+        "videoClip": "videos/css/css-box-model-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Border",
+        "text": "The border wraps around the padding and content area, forming the visible edge of the element. It can be styled with thickness, style (`solid`, `dashed`, `dotted`), and color independently for each side. With the default `content-box` sizing, borders add to the total element size; with `border-box` they are carved from the inside, keeping the declared width intact.",
+        "videoClip": "videos/css/css-box-model-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Margin",
+        "text": "Margin is the space outside the border — it pushes neighbouring elements away and has no background. Adjacent vertical margins between block elements collapse to the larger of the two values rather than adding together, which often surprises newcomers. `margin: 0 auto` centers a block element horizontally by distributing the remaining space equally on left and right.",
+        "videoClip": "videos/css/css-box-model-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "box-sizing",
+          "note": "Reset (apply globally)"
+        },
+        {
+          "label": "padding",
+          "note": "Inner spacing"
+        },
+        {
+          "label": "margin",
+          "note": "Outer spacing"
+        },
+        {
+          "label": "border",
+          "note": "Border + rounding"
+        },
+        {
+          "label": "width / height",
+          "note": "Sizing"
+        },
+        {
+          "label": "overflow",
+          "note": "Content overflow"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Center a page container"
+        },
+        {
+          "title": "Card with correct box model"
+        }
+      ],
+      "whenToUse": "The box model is foundational — every layout issue traces back to it. Always set box-sizing: border-box globally as the first rule in your stylesheet.",
+      "commonMistakes": [
+        "Forgetting box-sizing: border-box — causes widths to overflow when padding is added",
+        "Using margin to center vertically — margin: auto only works horizontally for block elements",
+        "Margin collapse: adjacent vertical margins merge (the larger wins) — not a bug, expected behavior"
+      ]
+    }
+  },
+  "css-typography": {
+    "title": "Text & Typography",
+    "description": "Font families, sizes, weights, and text styling",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Default browser text",
+        "text": "Without CSS, browsers apply their own default styles — usually Times New Roman at 16px. Every CSS reset or stylesheet you write is overriding these defaults. CSS resets remove all defaults to give a clean slate; normalizers like `normalize.css` make them consistent across browsers instead. Understanding defaults helps you override only what you actually need to change.",
+        "videoClip": "videos/css/css-typography-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "font-family, font-size, font-weight",
+        "text": "font-family sets the typeface — always end with a generic fallback. font-size controls how big text appears. font-weight ranges from 100 (thin) to 900 (black), with 400 = normal and 700 = bold.",
+        "videoClip": "videos/css/css-typography-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "text-align & text-decoration",
+        "text": "`text-align` positions text horizontally: `left`, `center`, `right`, or `justify`. `text-decoration` controls underlines, strikethroughs, and their style, color, and thickness. Removing underlines from links with `text-decoration: none` hurts accessibility — underlines are a primary visual indicator that text is interactive.",
+        "videoClip": "videos/css/css-typography-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Spacing: letter-spacing & line-height",
+        "text": "`letter-spacing` adjusts space between characters. `line-height` controls the height of each line — always use a unitless value like `1.6` so it scales proportionally with font size. A pixel value like `24px` breaks when child elements increase their font size, causing overlapping lines.",
+        "videoClip": "videos/css/css-typography-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "Google Fonts & @import",
+        "text": "Load custom fonts with `@import` or `<link>` at the top of your CSS. Google Fonts generates the URL for you. `@font-face` works the same way but for self-hosted files. Add `display=swap` to show a fallback font immediately while the web font loads, preventing invisible text.",
+        "videoClip": "videos/css/css-typography-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "font-family",
+          "note": "Always add fallback"
+        },
+        {
+          "label": "font shorthand",
+          "note": "weight size/line-height family"
+        },
+        {
+          "label": "text-align",
+          "note": "Horizontal alignment"
+        },
+        {
+          "label": "text-decoration",
+          "note": "Underline / strikethrough"
+        },
+        {
+          "label": "text-transform",
+          "note": "Case transformation"
+        },
+        {
+          "label": "line-height",
+          "note": "Line spacing"
+        },
+        {
+          "label": "letter-spacing",
+          "note": "Character spacing"
+        },
+        {
+          "label": "text-shadow",
+          "note": "Drop shadow on text"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Import and use a Google Font"
+        },
+        {
+          "title": "Link states — remove underline, add on hover"
+        }
+      ],
+      "whenToUse": "Set font-family, font-size, and line-height on body as a baseline — everything inherits from it. Use rem for font sizes. Set line-height to 1.5–1.7 for body text, tighter (1.1–1.3) for headings.",
+      "commonMistakes": [
+        "No generic fallback in font-family — if the custom font fails to load, the browser picks an ugly default",
+        "Using px for line-height — it doesn't scale if font-size changes. Use unitless values like 1.5",
+        "Overusing text-align: justify — creates uneven spacing between words, hurts readability"
+      ]
+    }
+  },
+  "css-backgrounds-gradients": {
+    "title": "Backgrounds & Gradients",
+    "description": "Background colors, images, and CSS gradient functions",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "background-color",
+        "text": "The simplest background — a solid color fill. Accepts any CSS color value: named, hex, `rgb()`, `hsl()`. It fills the content and padding areas but not the margin. If a `background-image` is also set, the color shows through transparent areas of the image, making it a reliable fallback.",
+        "videoClip": "videos/css/css-colors-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "background-image",
+        "text": "Load an image as a background using `url()`. Unlike `<img>`, background images don't affect document flow and are invisible to screen readers — use them for decoration, not content. Always pair with a fallback `background-color` in case the image fails to load. Multiple backgrounds stack: the first listed sits on top."
+      },
+      {
+        "animationStep": 2,
+        "heading": "repeat, position & size",
+        "text": "`background-repeat` controls tiling (`no-repeat`, `repeat-x`, `repeat-y`). `background-position` sets the origin with keywords like `center` or coordinates. `background-size: cover` scales the image to fill the container, cropping if needed; `contain` fits the image entirely within the container without cropping. The hero pattern `background-size: cover; background-position: center` is the standard for full-bleed photos."
+      },
+      {
+        "animationStep": 3,
+        "heading": "linear-gradient()",
+        "text": "Gradients are generated images — no image file needed. `linear-gradient()` transitions between colors in a straight line. Specify the direction (angle or keyword like `to right`) and two or more color stops. Gradients stack like background images and can be layered over photos."
+      },
+      {
+        "animationStep": 4,
+        "heading": "radial-gradient()",
+        "text": "`radial-gradient()` radiates from a center point outward. Great for spotlight effects and subtle depth. Control the shape (`circle` or `ellipse`) and position with `at x y`. Combine with transparency for card depth overlays and glowing highlight effects."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "background shorthand",
+          "note": "color image repeat position / size"
+        },
+        {
+          "label": "background-size",
+          "note": "cover vs contain"
+        },
+        {
+          "label": "linear-gradient",
+          "note": "angle, color stops"
+        },
+        {
+          "label": "radial-gradient",
+          "note": "shape at position"
+        },
+        {
+          "label": "conic-gradient",
+          "note": "Sweeps around a center point"
+        },
+        {
+          "label": "multiple backgrounds",
+          "note": "Stack: first on top"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Hero with image + dark overlay"
+        },
+        {
+          "title": "Gradient button"
+        }
+      ],
+      "whenToUse": "Use background-color for solid fills, linear-gradient for directional transitions (buttons, hero sections), radial-gradient for spotlight/glow effects. Always add background-color as a fallback when using background-image.",
+      "commonMistakes": [
+        "Forgetting background-size: cover for full-bleed images — without it, the image tiles or leaves gaps",
+        "No fallback background-color with background-image — if the image fails to load, the element is blank",
+        "Using an image when a gradient would do — gradients load instantly and are resolution-independent"
+      ]
+    }
+  },
+  "css-shadows": {
+    "title": "Shadows",
+    "description": "box-shadow and text-shadow — depth, glow effects, and layered shadows for visual hierarchy",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "box-shadow anatomy",
+        "text": "`box-shadow` takes: x-offset, y-offset, blur-radius, spread-radius, color. Only the first two are required — the others default to 0 or black. Positive x shifts right, positive y shifts down. Multiple shadows can be stacked with commas; the first one in the list renders on top.",
+        "videoClip": "videos/css/css-shadows-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Simple drop shadow",
+        "text": "A single shadow with a slight y-offset and blur creates the illusion of depth. Keep the shadow subtle — large opaque shadows look dated and heavy. For a realistic result, avoid pure black: match the shadow hue to your background color and lower the lightness (`hsl(220deg 60% 20% / 0.3)` on a blue surface). Pure `rgba(0,0,0)` desaturates the background color beneath it, making shadows look like flat grey boxes.",
+        "videoClip": "videos/css/css-shadows-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Layered shadows",
+        "text": "Stack multiple shadows with commas for realism. A tight near-shadow + a diffuse far-shadow mimics how light actually behaves. This is the secret behind polished UI design systems.",
+        "videoClip": "videos/css/css-shadows-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Inset shadow",
+        "text": "Adding `inset` flips the shadow to the inside of the box, creating a recessed appearance. Common uses include pressed button states (outer shadow on default, inset shadow on `:active`), sunken input fields, and inner depth on cards. You can combine both inset and outset shadows on the same element.",
+        "videoClip": "videos/css/css-shadows-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "Glow and text-shadow",
+        "text": "Zero offset with a large blur radius creates a glow in any direction. This works on `box-shadow` for element halos and `text-shadow` for neon text effects. The `text-shadow` syntax is identical to `box-shadow` but has no spread radius — just x-offset, y-offset, blur, and color. Stacking multiple `text-shadow` layers at different blur sizes intensifies the glow effect.",
+        "videoClip": "videos/css/css-shadows-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "box-shadow",
+          "note": "spread optional; positive = outward"
+        },
+        {
+          "label": "multiple shadows",
+          "note": "Comma-separated, first renders on top"
+        },
+        {
+          "label": "inset",
+          "note": "Shadow inside the box"
+        },
+        {
+          "label": "text-shadow",
+          "note": "Same syntax, no spread"
+        },
+        {
+          "label": "glow",
+          "note": "Zero offset + large blur = glow"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Layered card shadow"
+        },
+        {
+          "title": "Focus ring (accessibility)"
+        }
+      ],
+      "whenToUse": "Use box-shadow for depth, hover states, and focus rings. Prefer it over border for focus indicators (doesn't affect layout). Use text-shadow sparingly — only for hero headings or glow effects.",
+      "commonMistakes": [
+        "Animating box-shadow on hover — it's not GPU-composited. Use opacity + a pseudo-element for performance",
+        "No color on glow shadow — defaults to currentColor which may not be what you want",
+        "Forgetting that spread-radius 0 is still required when using rgba colors"
+      ]
+    }
+  },
+  "css-images": {
+    "title": "Images",
+    "description": "Responsive images, object-fit, and visual styling",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Unstyled images overflow",
+        "text": "By default, images render at their natural (intrinsic) size. A 1200px photo in a 400px container will overflow — breaking your layout. Unlike block elements, images do not expand to fill their container; you must constrain them explicitly. Setting `width: 100%; height: auto` is the standard responsive fix."
+      },
+      {
+        "animationStep": 1,
+        "heading": "max-width: 100%",
+        "text": "The simplest responsive image fix. The image will never be wider than its container and scales down proportionally if the container is smaller. Always add `height: auto; display: block` to complete the baseline setup — images are `inline` by default, which creates a small gap of invisible space below them caused by line-height. Setting `display: block` removes this gap and prevents images from unexpectedly overflowing their parent container."
+      },
+      {
+        "animationStep": 2,
+        "heading": "object-fit: cover",
+        "text": "When you need an image to fill a fixed-size container without distortion. `object-fit: cover` scales and crops the image to fill. Use `object-position` to control the crop anchor."
+      },
+      {
+        "animationStep": 3,
+        "heading": "border-radius",
+        "text": "Round any element's corners with `border-radius`. A single value rounds all four corners equally; individual sides like `border-top-left-radius` give per-corner control. `50%` on a square creates a perfect circle, ideal for avatars. Add `overflow: hidden` on a parent with `border-radius` to clip child images cleanly to the rounded shape."
+      },
+      {
+        "animationStep": 4,
+        "heading": "aspect-ratio",
+        "text": "`aspect-ratio` locks a container's proportions — set a width and the height is calculated automatically. Pair with `object-fit: cover` to fill the area without distortion. It replaces the old padding-top percentage hack and works for images, videos, and iframes. `aspect-ratio: 1` creates a perfect square regardless of content."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "responsive image",
+          "note": "Always include this reset"
+        },
+        {
+          "label": "object-fit",
+          "note": "How image fills container"
+        },
+        {
+          "label": "object-position",
+          "note": "Crop anchor point"
+        },
+        {
+          "label": "aspect-ratio",
+          "note": "Lock proportions"
+        },
+        {
+          "label": "border-radius",
+          "note": "Rounding"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Avatar with circle crop"
+        },
+        {
+          "title": "Card image with fixed ratio"
+        }
+      ],
+      "whenToUse": "Always add max-width: 100% and height: auto to images globally. Use object-fit: cover + aspect-ratio for thumbnails and cards. Use border-radius: 50% for avatars. Add display: block to remove the inline gap below images.",
+      "commonMistakes": [
+        "Forgetting height: auto with max-width: 100% — image squishes if height is set in HTML attributes",
+        "object-fit without a fixed height — the container must have a defined height for object-fit to work",
+        "Using border-radius on the img element inside a container — also set overflow: hidden on the container"
+      ]
+    }
+  },
+  "css-display-positioning": {
+    "title": "Display & Positioning",
+    "description": "How elements flow, stack, and position relative to each other",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Block flow",
+        "text": "Block elements stack vertically — each one starts on a new line and stretches to fill available width. `div`, `p`, `h1–h6`, and `section` are block elements by default. Adjacent vertical margins between block elements collapse to the larger value rather than adding together, which keeps paragraph spacing consistent. One persistent gotcha: `height: 50%` on a child often does nothing. Browsers derive width top-down (parent → child) but height bottom-up (child → parent), creating a circular dependency. Fix it by giving the parent an explicit height, or switch to Flexbox or Grid which stretch children without this paradox.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "display: inline",
+        "text": "`display: inline` elements sit side by side in the text flow and only take up as much width as their content. You can't set `width` or `height` on them, and vertical margins don't push other elements away. This is the default for text-level elements like `<span>`, `<a>`, `<strong>`, and `<em>`.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "display: inline-block",
+        "text": "`display: inline-block` is the best of both worlds — it sits inline like text without forcing a line break, but accepts `width`, `height`, `padding`, and `margin` like a block. Useful for inline buttons and labels that need explicit sizing. Today Flexbox largely replaces it for layouts, but `inline-block` remains handy for elements mixed into flowing text.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "position: relative",
+        "text": "The element stays in the normal flow but can be nudged using top, right, bottom, left. The space it would have occupied is preserved. Commonly used as a positioning anchor for absolute children.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "position: absolute",
+        "text": "Removes the element from the normal flow — other elements ignore it. Positions relative to the nearest ancestor with `position: relative` (or the viewport if none). Essential for tooltips, dropdowns, and overlays. For modals and floating UI, `position: fixed; inset: 0; margin: auto` with an explicit `width` and `height` is the cleanest centering approach — `inset: 0` stretches the element to all edges, and `margin: auto` distributes the remaining space equally, centering it without `transform: translate(-50%, -50%)` hacks.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "display values",
+          "note": "Core display values"
+        },
+        {
+          "label": "position: relative",
+          "note": "Anchor + nudge"
+        },
+        {
+          "label": "position: absolute",
+          "note": "Out of flow"
+        },
+        {
+          "label": "position: fixed",
+          "note": "Relative to viewport"
+        },
+        {
+          "label": "position: sticky",
+          "note": "Scroll then stick"
+        },
+        {
+          "label": "z-index",
+          "note": "Stacking order (higher = on top)"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Badge / tooltip anchored to a card"
+        },
+        {
+          "title": "Full-cover overlay"
+        }
+      ],
+      "whenToUse": "Use block/inline-block for document flow, flexbox for 1D layouts, grid for 2D layouts. Use relative + absolute together for overlays, badges, and tooltips. Use fixed for navbars and modals. Use sticky for sidebars.",
+      "commonMistakes": [
+        "position: absolute without a positioned ancestor — it anchors to the viewport instead of the intended parent",
+        "Using position when flexbox/grid is simpler — absolute positioning is for overlapping elements, not general layout",
+        "z-index not working — it only applies to positioned elements (relative, absolute, fixed, sticky)"
+      ]
+    }
+  },
+  "css-flexbox": {
+    "title": "Flexbox",
+    "description": "One-dimensional layout — align items in rows or columns effortlessly",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "The classic navbar",
+        "text": "Flexbox solves the navbar in 2 lines: display: flex on the container, then justify-content: space-between pushes the logo left and links right. The browser handles everything in between.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Responsive card rows",
+        "text": "Add `flex-wrap: wrap` so cards automatically drop to the next row when there's no space. `gap` replaces margin hacks. Each card gets `flex: 1 1 250px` — grow, shrink, minimum 250px wide. In Flexbox, declared widths are hypothetical — the algorithm can shrink items below their set size to fit the container. If items still overflow unexpectedly, check for a minimum size: text inputs and long unbreakable words prevent shrinking below their natural width, fixed with `min-width: 0` on the flex child.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Perfect centering",
+        "text": "The most searched CSS question: how do I center this? With flexbox it's two properties on the parent. justify-content centers on the main axis, align-items on the cross axis.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Core properties recap",
+        "text": "These three flex properties — `justify-content`, `align-items`, and `gap` — cover 90% of real layouts. Add `flex-direction: column` for vertical stacks. Flexbox handles one dimension at a time; reach for CSS Grid when you need two-dimensional control over both rows and columns simultaneously.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Container",
+          "note": "Parent properties"
+        },
+        {
+          "label": "justify-content",
+          "note": "Main axis alignment"
+        },
+        {
+          "label": "align-items",
+          "note": "Cross axis alignment"
+        },
+        {
+          "label": "flex (child)",
+          "note": "Child sizing shorthand"
+        },
+        {
+          "label": "flex-wrap",
+          "note": "Wrapping"
+        },
+        {
+          "label": "gap",
+          "note": "Space between items"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Navbar: logo left, links right"
+        },
+        {
+          "title": "Full-viewport center"
+        },
+        {
+          "title": "Responsive card row that wraps"
+        }
+      ],
+      "whenToUse": "Flexbox is for one-dimensional layouts — a row or a column. Use it for navbars, button groups, vertically centering content. Use CSS Grid for two-dimensional layouts.",
+      "commonMistakes": [
+        "Applying flex properties to the wrong element — direction/justify/align go on the parent, flex/align-self go on children",
+        "Using flex: 1 and expecting a fixed size — flex: 1 grows the item to fill remaining space",
+        "Using margin instead of gap — gap avoids double spacing at edges that margin causes"
+      ]
+    }
+  },
+  "css-grid": {
+    "title": "CSS Grid",
+    "description": "Two-dimensional layout — control rows and columns simultaneously",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Name your areas",
+        "text": "`grid-template-areas` lets you draw your layout as ASCII art. Each string is a row, repeated names span multiple columns, and a dot (`.`) leaves a cell empty. You can see the structure at a glance — no tracking column numbers. The area names must form rectangles; non-rectangular areas are invalid.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Assign children",
+        "text": "Each child gets a `grid-area` name matching the template — the browser places it exactly, no manual column/row tracking needed. The name is arbitrary: `header`, `sidebar`, `main`, `footer` are conventions, not keywords. Renaming an area in the template instantly moves it everywhere in the layout. For nested layouts where inner elements must align with the outer grid's columns, use `grid-template-columns: subgrid` — the child grid inherits the parent's tracks instead of creating its own, keeping cards with varying content heights perfectly aligned without extra wrappers.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Responsive with areas",
+        "text": "Redefine the template in a `@media` query and the browser re-flows all named areas instantly — no changing individual `grid-column`/`row` values on each child. This is the most maintainable pattern for responsive layouts: update one ASCII string on the parent and everything repositions.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "fr unit and auto-fit",
+        "text": "`fr` (fractional unit) fills remaining space proportionally — unlike `%`, it accounts for `gap` automatically. Combine with `repeat(auto-fill, minmax(250px, 1fr))` to create grids that automatically add or remove columns as the container resizes, with no media queries required. When placing items manually, watch the line-count trap: a 4-column grid has 5 grid lines. `grid-column: 1 / 4` spans only 3 columns — the numbers refer to lines, not column indexes.",
+        "videoClip": "videos/css/css-display-position-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Container",
+          "note": "Basic 3-column grid"
+        },
+        {
+          "label": "fr unit",
+          "note": "Fractional unit"
+        },
+        {
+          "label": "repeat()",
+          "note": "Repeat shorthand"
+        },
+        {
+          "label": "grid-column",
+          "note": "Child column placement"
+        },
+        {
+          "label": "grid-row",
+          "note": "Child row placement"
+        },
+        {
+          "label": "grid-template-areas",
+          "note": "Named areas"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Responsive auto-fill card grid"
+        },
+        {
+          "title": "Page layout with sidebar"
+        }
+      ],
+      "whenToUse": "Use Grid for two-dimensional layouts (rows AND columns simultaneously). For a single row or column, Flexbox is simpler. Grid excels at page-level layouts and equal-height card grids.",
+      "commonMistakes": [
+        "Confusing fr with % — fr distributes remaining space after fixed sizes; % is always absolute",
+        "Applying grid-column/row on the container — those properties go on the children",
+        "Confusing auto-fill vs auto-fit — auto-fit collapses empty tracks, auto-fill preserves them"
+      ]
+    }
+  },
+  "css-responsive": {
+    "title": "Responsive Design",
+    "description": "Media queries, mobile-first CSS, and fluid layouts",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "One layout, all screens",
+        "text": "Without media queries, your layout is fixed. On mobile, content may overflow or look cramped. Responsive design makes your CSS adapt to the viewport width so the same HTML works on every device. The `<meta name=\"viewport\">` tag in your HTML is required to activate this — without it, mobile browsers zoom out and media queries behave incorrectly.",
+        "videoClip": "videos/css/css-responsive-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Media query — tablet breakpoint",
+        "text": "`@media` applies styles only when a condition is true. `min-width: 768px` means \"apply these styles on screens 768px wide or wider\" — a common tablet breakpoint. Any CSS rule inside the block overrides the mobile base styles. Multiple queries stack: each larger breakpoint builds on top of the previous one.",
+        "videoClip": "videos/css/css-responsive-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Desktop breakpoint",
+        "text": "Stack media queries from smallest to largest in a mobile-first approach. The 1024px breakpoint unlocks a 3-column layout for wider screens. Keep breakpoints content-driven — add one when your layout looks wrong, not to match specific device widths that change every product cycle. Modern Grid with `auto-fit` and `minmax()` can eliminate many breakpoints entirely.",
+        "videoClip": "videos/css/css-responsive-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Mobile-first approach",
+        "text": "Write base styles for mobile, then add complexity at larger sizes using min-width queries. This is the opposite of \"desktop-first\" (max-width). Mobile-first is the industry standard — it forces simpler defaults.",
+        "videoClip": "videos/css/css-responsive-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "Fluid units",
+        "text": "Use `%`, `vw`, `vh`, and `rem` instead of fixed `px` for layouts that scale naturally. `clamp(min, ideal, max)` is powerful: it grows with the viewport but never exceeds a maximum or drops below a minimum, enabling fluid typography without any media queries. `font-size: clamp(1rem, 2.5vw, 1.5rem)` scales from 16px to 24px automatically.",
+        "videoClip": "videos/css/css-responsive-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "media query",
+          "note": "Common breakpoints"
+        },
+        {
+          "label": "clamp()",
+          "note": "Fluid with limits"
+        },
+        {
+          "label": "min() / max()",
+          "note": "Shorthand for constrained widths"
+        },
+        {
+          "label": "viewport units",
+          "note": "vw, vh, vmin, vmax"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Mobile-first responsive grid"
+        },
+        {
+          "title": "Fluid container"
+        }
+      ],
+      "whenToUse": "Always build mobile-first — write base styles for small screens, enhance with min-width media queries. Common breakpoints: 480px (large phone), 768px (tablet), 1024px (laptop), 1280px (desktop). Use clamp() for fluid typography.",
+      "commonMistakes": [
+        "Desktop-first (max-width queries) — leads to complex CSS that's hard to maintain. Switch to min-width.",
+        "Hardcoding px widths for layouts — use % or grid with fr units so they scale automatically",
+        "Too many custom breakpoints — stick to 3–4 consistent breakpoints across the project"
+      ]
+    }
+  },
+  "css-overflow": {
+    "title": "Overflow & Scrolling",
+    "description": "Control what happens when content is larger than its container — hide, scroll, or clip with precision",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "The overflow problem",
+        "text": "By default, `overflow: visible` means content spills out of its container and can overlap sibling elements. This breaks layouts and creates visual glitches. Setting `overflow: hidden`, `scroll`, or `auto` on the container clips or scrolls the excess content instead.",
+        "videoClip": "videos/css/css-overflow-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "overflow: hidden",
+        "text": "`overflow: hidden` clips content at the container boundary. Nothing is scrollable — the overflow just disappears. Use it to contain floated children, clip images, or create masked effects.",
+        "videoClip": "videos/css/css-overflow-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "overflow: auto and scroll",
+        "text": "auto adds a scrollbar only when content overflows. scroll always shows the scrollbar. Prefer auto — it avoids layout shift on content size changes. Control axes separately with overflow-x / overflow-y.",
+        "videoClip": "videos/css/css-overflow-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "text-overflow: ellipsis",
+        "text": "Truncates text with \"...\" at the container edge. Requires three properties working together: white-space: nowrap (prevent wrapping), overflow: hidden (hide overflow), text-overflow: ellipsis (show dots).",
+        "videoClip": "videos/css/css-overflow-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "overflow",
+          "note": "Sets both x and y"
+        },
+        {
+          "label": "overflow-x / overflow-y",
+          "note": "Control axes independently"
+        },
+        {
+          "label": "text-overflow",
+          "note": "All three required for \"...\""
+        },
+        {
+          "label": "scroll-behavior",
+          "note": "Smooth scrolling for anchor links"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Single-line truncate"
+        },
+        {
+          "title": "Multi-line truncate (WebKit)"
+        }
+      ],
+      "whenToUse": "Use overflow: hidden to contain absolutely positioned children or clip images. Use auto for scrollable containers. Use ellipsis for card titles that might be too long.",
+      "commonMistakes": [
+        "Missing white-space: nowrap when using text-overflow: ellipsis — the text wraps instead of truncating",
+        "overflow: hidden on body/html breaking position: fixed elements",
+        "Forgetting that overflow: hidden clips the child box-shadow and border-radius effects"
+      ]
+    }
+  },
+  "css-custom-properties": {
+    "title": "CSS Custom Properties",
+    "description": "Variables in CSS — declare once, reuse everywhere, override in child scopes",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "The problem: hardcoded values",
+        "text": "Without variables, you repeat the same color hex in dozens of rules. Change the brand color? Find and replace across every file. CSS Custom Properties give values names so a single change at the source propagates everywhere automatically — no build step required."
+      },
+      {
+        "animationStep": 1,
+        "heading": "Declare with --name",
+        "text": "Custom properties start with `--`. Declare them on `:root` to make them globally available to every element. They cascade just like any CSS property — declare on a specific selector to scope the variable to that subtree. Unlike Sass variables, they resolve at runtime, so JavaScript can read and modify them."
+      },
+      {
+        "animationStep": 2,
+        "heading": "Use with var()",
+        "text": "The `var()` function reads the custom property value at the element where it is used. Change `--color-primary` in one place and every rule using `var(--color-primary)` updates automatically. Pass a second argument as a fallback: `var(--color-primary, #3b82f6)` uses the hex if the variable is not defined."
+      },
+      {
+        "animationStep": 3,
+        "heading": "Override in child scope",
+        "text": "Re-declare the variable inside a selector to override it for that subtree. Child elements see the new value; elements outside are unaffected. This scoping makes dark mode trivial: redefine `--bg` and `--text` on `[data-theme=\"dark\"]` and every component updates automatically."
+      },
+      {
+        "animationStep": 4,
+        "heading": "Design token system",
+        "text": "A small set of custom properties for colors, spacing, and radii becomes your design system. Components reference tokens — change a token and the whole UI updates. This is how Tailwind, Material UI, and most modern design systems work under the hood."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Declare variable",
+          "note": ":root = global scope"
+        },
+        {
+          "label": "Use variable"
+        },
+        {
+          "label": "Fallback value",
+          "note": "Second arg = fallback if not set"
+        },
+        {
+          "label": "Override in scope",
+          "note": "Only affects children of .dark"
+        }
+      ],
+      "whenToUse": "Use custom properties for any value repeated 3+ times, or any value that changes between themes or contexts.",
+      "commonMistakes": [
+        "Forgetting the -- prefix — --my-var is valid, my-var is just a plain attribute",
+        "Using var() without a fallback in critical properties — if undefined, the property is invalid",
+        "Overusing custom properties for one-off values — they are for shared, reusable tokens"
+      ]
+    }
+  },
+  "css-variables-theming": {
+    "title": "Theming & Dark Mode",
+    "description": "Light/dark themes with CSS custom properties — one stylesheet, two color schemes",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "The problem with hardcoded colors",
+        "text": "When colors are scattered across 50 CSS files, changing your brand color means grep-and-replace across the entire codebase. One missed instance and your UI is inconsistent."
+      },
+      {
+        "animationStep": 1,
+        "heading": "Design tokens with :root",
+        "text": "`:root` variables are globally available. Define your entire design token system here — colors, spacing, radius, shadows — so components reference tokens, never hardcoded values. Toggling a `data-theme` attribute on `<html>` can swap every color in the UI at once."
+      },
+      {
+        "animationStep": 2,
+        "heading": "Dark mode with class override",
+        "text": "Override the same variable names in a `.dark` class. Add/remove this class on `<html>` or `<body>` in JavaScript to swap the entire theme — no component code changes needed. This \"change values, not variables\" principle extends beyond dark mode: redefine root variables inside `@media` queries so components inherit responsive values automatically, without needing breakpoint logic in every individual rule."
+      },
+      {
+        "animationStep": 3,
+        "heading": "prefers-color-scheme",
+        "text": "Respect the user's OS preference automatically with `prefers-color-scheme`. The media query reads the system setting and activates the dark token overrides — no JavaScript needed for the initial paint. Toggle a `data-theme` attribute with JavaScript for a user-controlled switch that overrides the OS default."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Define variable",
+          "note": ":root = highest scope (html element)"
+        },
+        {
+          "label": "Use variable"
+        },
+        {
+          "label": "Fallback",
+          "note": "Second arg used if var is undefined"
+        },
+        {
+          "label": "Dark override",
+          "note": "Redefine in scope, all consumers update"
+        },
+        {
+          "label": "System preference",
+          "note": "Auto-detect OS dark mode"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Token system"
+        }
+      ],
+      "whenToUse": "Always define colors as CSS variables, not raw values. Pair with prefers-color-scheme for automatic dark mode. Use class-based toggling when you need a user-controlled switch.",
+      "commonMistakes": [
+        "Using var() inside calc() — works fine: calc(var(--spacing) * 2)",
+        "Defining variables inside a component selector instead of :root — they won't be available globally",
+        "Not providing a fallback value for variables that might not be defined"
+      ]
+    }
+  },
+  "css-transforms": {
+    "title": "CSS Transforms",
+    "description": "Move, rotate, scale, and skew elements without affecting document flow",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "No transform",
+        "text": "Without transform, the element sits in its normal document flow. Transforms apply visually — they do not push other elements around. Because transforms operate on a composited GPU layer rather than affecting layout, animating `transform` is far more performant than animating `margin`, `top`, or `width`.",
+        "videoClip": "videos/css/css-transforms-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "translate()",
+        "text": "`translate(x, y)` moves the element from its normal position. Unlike `margin`, it does not affect surrounding layout — other elements stay put. `translateX(50%)` shifts by half the element's own width, enabling the classic centering trick: `left: 50%; transform: translateX(-50%)`.",
+        "videoClip": "videos/css/css-transforms-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "rotate()",
+        "text": "`rotate(angle)` spins the element around its `transform-origin` (default: center). Positive values rotate clockwise; negative values counter-clockwise. Changing `transform-origin` to `top left` makes the element rotate around its corner — useful for fold-out panels and card-flip effects.",
+        "videoClip": "videos/css/css-transforms-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "scale()",
+        "text": "`scale(n)` resizes the element visually without affecting layout. `1` = original size, `1.5` = 50% larger, `0.5` = half size. Scaling also scales child elements and borders — a `1px` border on a `scale(2)` element renders at `2px` visually. Pair with `transition` for smooth hover zoom effects.",
+        "videoClip": "videos/css/css-transforms-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "Combining transforms",
+        "text": "Multiple transform functions stack left-to-right and order matters significantly — `rotate` then `translate` moves along the rotated axis, while `translate` then `rotate` moves along the original axis. Always mentally trace from right to left when debugging unexpected positioning results.",
+        "videoClip": "videos/css/css-transforms-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Translate",
+          "note": "translateX() / translateY() also work"
+        },
+        {
+          "label": "Rotate",
+          "note": "Positive = clockwise"
+        },
+        {
+          "label": "Scale",
+          "note": "scaleX() / scaleY() for one axis"
+        },
+        {
+          "label": "Combined",
+          "note": "Order matters!"
+        },
+        {
+          "label": "Transform origin",
+          "note": "Default is center center"
+        }
+      ],
+      "whenToUse": "Use transforms for hover effects, animations, and positioning UI elements. Prefer transform over margin/top/left for animated movement — it is GPU-accelerated.",
+      "commonMistakes": [
+        "Confusing transform with position — transform is visual-only, does not affect flow",
+        "Forgetting order matters — rotate then translate != translate then rotate",
+        "Using px for translate on fluid layouts — use % to translate relative to the element itself"
+      ]
+    }
+  },
+  "css-transitions": {
+    "title": "CSS Transitions",
+    "description": "Smoothly animate property changes between states",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Without transition",
+        "text": "Without transition, any property change snaps instantly. It works, but feels abrupt and mechanical. Transitions tell the browser to interpolate between two style states over a given duration, making changes feel smooth and intentional. Only animatable properties can be transitioned — `display` cannot be interpolated.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Add transition: property duration",
+        "text": "`transition` tells the browser to animate the named property over a given duration. The animation plays in both directions automatically — on hover and on hover-out. Place the `transition` rule on the base element, not in `:hover`, so both directions animate smoothly.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "transition: all",
+        "text": "`all` animates every changing property — convenient for prototyping but risky in production. It can trigger unintended transitions and forces the browser to monitor all properties. Prefer listing specific properties: `transition: background 0.2s, transform 0.3s`.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Timing functions",
+        "text": "The timing function controls the velocity curve. `ease-in-out` starts slow, speeds up, then slows at the end — the most natural feel for most UI transitions. `ease-in` is good for elements leaving the screen; `ease-out` for elements entering. `cubic-bezier()` gives you full control over the curve.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "Multiple transitions",
+        "text": "Comma-separate transition declarations to give each property its own duration and timing. A button hover might transition `background` quickly (0.15s) and `box-shadow` more slowly (0.25s) for a sense of depth. Different speeds per property is what makes interactions feel polished rather than mechanical.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 5,
+        "heading": "Animate the right properties",
+        "text": "Not all CSS properties are equal. transform and opacity run on the GPU compositor thread — they never trigger layout recalculation. width, height, top, left force reflow on every frame, causing jank. Prefer translate() over left/top for movement.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Single property",
+          "note": "property duration timing"
+        },
+        {
+          "label": "Multiple"
+        },
+        {
+          "label": "All properties",
+          "note": "Convenient but avoid for performance"
+        },
+        {
+          "label": "With delay",
+          "note": "Last value = delay before starting"
+        }
+      ],
+      "whenToUse": "Use transitions for state changes driven by CSS pseudo-classes (:hover, :focus, :checked) or class toggles. For complex timed sequences use animation instead.",
+      "commonMistakes": [
+        "Putting transition on :hover — it only plays on hover-in, not hover-out. Always put transition on the base element",
+        "Using transition: all in performance-sensitive components — list specific properties instead",
+        "Animating layout properties (width, height) — animate transform and opacity; they are GPU-accelerated"
+      ]
+    }
+  },
+  "css-animations": {
+    "title": "CSS Animations",
+    "description": "@keyframes animations that run automatically, repeat, and fill",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Animations vs transitions",
+        "text": "Transitions react to state changes triggered by hover or class toggling. Animations run on their own timeline — no user interaction needed. They have defined keyframes, can loop, reverse, and pause independently of element state. Use transitions for UI feedback, animations for self-driven motion like loaders.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "@keyframes",
+        "text": "Define the animation with `@keyframes` + a name. Use `from`/`to` for two states, or percentages (`0%`, `50%`, `100%`) for multiple stages. The same keyframes block can be reused on multiple elements with different durations, delays, and timing functions — write once, apply everywhere.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 2,
+        "heading": "Apply with animation shorthand",
+        "text": "The `animation` shorthand takes name, duration, timing function, delay, iteration count, direction, fill-mode, and play-state. Without a duration the animation plays in 0 seconds and appears invisible — the most common setup mistake. Separate multiple animations with commas to run them in parallel.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 3,
+        "heading": "Repeat with iteration-count",
+        "text": "`animation-iteration-count: infinite` loops forever. Use `alternate` direction to play forward then backward — creates a smooth ping-pong effect without writing reverse keyframes. Finite counts like `3` play exactly that many times and stop.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 4,
+        "heading": "animation-fill-mode",
+        "text": "`animation-fill-mode` controls the element's state outside the animation timeline. Without it, the element snaps back to its original styles the moment the animation ends — a jarring flash. `forwards` holds the final keyframe state after completion. `both` also applies the first keyframe during the delay, ideal for entrance animations.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      },
+      {
+        "animationStep": 5,
+        "heading": "animation-fill-mode",
+        "text": "Without fill-mode, an element snaps back to its original state when the animation ends. forwards keeps the final keyframe applied. backwards applies the first keyframe immediately (before delay). both does both.",
+        "videoClip": "videos/css/css-animations-vid.mp4"
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "@keyframes"
+        },
+        {
+          "label": "Apply shorthand",
+          "note": "name duration timing fill-mode"
+        },
+        {
+          "label": "Loop forever"
+        },
+        {
+          "label": "Bounce (alternate)",
+          "note": "Plays fwd then backward"
+        },
+        {
+          "label": "With delay",
+          "note": "Fourth value = delay"
+        }
+      ],
+      "whenToUse": "Use @keyframes for looping effects (spinners, pulses), entrance animations (fade-in, slide-in), or multi-step sequences. Use transitions for simple two-state changes.",
+      "commonMistakes": [
+        "Animating layout properties (width, height) — always animate transform and opacity instead",
+        "Forgetting animation-fill-mode: forwards when you want the final state to persist",
+        "Not setting animation-iteration-count when you want it to loop (default is 1)"
+      ]
+    }
+  },
+  "css-tailwind": {
+    "title": "Tailwind CSS",
+    "description": "Tailwind CSS is a utility-first framework: apply small single-purpose classes like `flex`, `p-4`, or `text-blue-500` directly on elements.",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Utility-First Approach",
+        "text": "In Tailwind, you style elements by composing small single-purpose classes directly on the element rather than writing custom CSS. Each class does exactly one thing: p-4 adds padding, text-blue-500 sets color, flex enables flexbox. No naming of CSS classes required.",
+        "videoClip": "videos/css/css-tailwind-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Why CSS Frameworks?",
+        "text": "Raw CSS has pain points: repetitive rules, naming conventions (BEM), and maintaining media queries across a large codebase. Utility-first frameworks solve this by applying single-purpose classes directly in HTML — no naming decisions, no context switching between files."
+      },
+      {
+        "animationStep": 2,
+        "heading": "Setup: CDN and npm",
+        "text": "For quick prototyping, add the CDN Play script to your HTML. For production, install via npm and use a PostCSS plugin or the Vite/CLI integration — this enables purging unused styles and customizing the design system via tailwind.config.js."
+      },
+      {
+        "animationStep": 3,
+        "heading": "Common Utility Classes",
+        "text": "Tailwind covers spacing (p-, m-), sizing (w-, h-), typography (text-, font-), colors (bg-, text-, border-), flexbox/grid (flex, grid, items-, justify-), borders (rounded-, border-), and effects (shadow-, opacity-). The full list is in the official docs."
+      },
+      {
+        "animationStep": 4,
+        "heading": "Responsive Breakpoints",
+        "text": "Tailwind is mobile-first. Unprefixed classes apply to all screen sizes; breakpoint prefixes apply from that width upward. Breakpoints: sm: 640px · md: 768px · lg: 1024px · xl: 1280px · 2xl: 1536px. Stack prefixes to build fully responsive layouts without writing a single media query."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "Padding / Margin"
+        },
+        {
+          "label": "Flex layout"
+        },
+        {
+          "label": "Responsive prefix"
+        },
+        {
+          "label": "State variants"
+        },
+        {
+          "label": "group (parent → child)"
+        },
+        {
+          "label": "peer (sibling)"
+        },
+        {
+          "label": "@theme (v4)"
+        },
+        {
+          "label": "Container query"
+        }
+      ],
+      "patterns": [
+        {
+          "title": "Interactive button"
+        },
+        {
+          "title": "Card"
+        },
+        {
+          "title": "Hover card with group"
+        },
+        {
+          "title": "Custom theme (v4)"
+        }
+      ],
+      "whenToUse": "Use Tailwind when you want fast iteration without switching between HTML and CSS files. Especially powerful in component-based frameworks (React, Vue, Svelte) where class lists live next to component logic.",
+      "commonMistakes": [
+        "Trying to write dynamic class strings that Tailwind cannot detect at build time (e.g. \"bg-\" + color) — Tailwind scans for full class names; use full strings or a safelist.",
+        "Forgetting the responsive prefix order — mobile-first means unprefixed classes apply to all sizes, prefixed ones apply upward.",
+        "Using arbitrary values too often (`w-[347px]`) — prefer spacing scale values for consistency across the design system.",
+        "Using group/peer without marking the parent/sibling — the group/peer class must be on the ancestor/preceding element, not the styled child.",
+        "Using tailwind.config.js in v4 — Tailwind v4 is CSS-first; use @theme in your CSS file instead of a JS config."
+      ]
+    }
+  },
+  "css-tailwind-layout": {
+    "title": "Tailwind: Layout & Spacing",
+    "description": "Master Tailwind's spacing scale, sizing utilities, and layout primitives — flex and grid without writing a single line of custom CSS.",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "The Spacing Scale",
+        "text": "Tailwind uses a consistent 4px base unit. `p-1` = 4px, `p-2` = 8px, `p-4` = 16px, `p-8` = 32px. All padding, margin, gap, and sizing utilities share the same scale — spatial consistency across the whole UI with zero effort.",
+        "videoClip": "videos/css/css-tailwind-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Sizing & Centering",
+        "text": "`w-full` makes an element 100% wide, `w-1/2` is 50%, `w-64` is 256px. Use `max-w-*` to cap width: `max-w-sm` (384px), `max-w-xl` (576px), `max-w-screen-lg` (1024px). Center a block with `mx-auto`."
+      },
+      {
+        "animationStep": 2,
+        "heading": "Flexbox in Tailwind",
+        "text": "Add `flex` to activate flexbox. `items-center` aligns children vertically, `justify-between` spreads them apart, `gap-*` sets spacing between items. Combine `flex-wrap` with `flex-1` for responsive layouts that fill available space."
+      },
+      {
+        "animationStep": 3,
+        "heading": "Grid in Tailwind",
+        "text": "`grid` + `grid-cols-*` creates column layouts. `grid-cols-3` = three equal columns. `col-span-2` stretches an item across two columns. Use `gap-*` for gutters. Responsive grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "p-4 / m-4",
+          "note": "16px padding / margin"
+        },
+        {
+          "label": "w-full / max-w-xl",
+          "note": "100% width / capped at 576px"
+        },
+        {
+          "label": "flex items-center justify-between",
+          "note": "Horizontal navbar layout"
+        },
+        {
+          "label": "grid grid-cols-3 gap-4",
+          "note": "3-column grid with 16px gap"
+        },
+        {
+          "label": "mx-auto",
+          "note": "Centre a block element"
+        }
+      ],
+      "whenToUse": "Use Tailwind layout utilities whenever you would otherwise write custom Flexbox or Grid CSS. The spacing scale keeps your design consistent without a separate design token file.",
+      "commonMistakes": [
+        "Using px values instead of spacing scale — break the 4px grid and the design looks inconsistent",
+        "Forgetting `max-w-*` on container elements — content stretches to full viewport on large screens",
+        "Using `gap` on non-flex/non-grid parents — `gap` only works inside flex or grid contexts"
+      ]
+    }
+  },
+  "css-tailwind-states": {
+    "title": "Tailwind: States & Interactivity",
+    "description": "Style elements based on hover, focus, and form states. Use group and peer to react to parent/sibling state without JavaScript.",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "State Variants",
+        "text": "Prefix any utility with a state variant to apply it conditionally. `hover:`, `focus:`, `active:` cover mouse/keyboard interactions. `disabled:` and `checked:` target form states. `focus-visible:` only activates on keyboard focus — great for accessible outlines. Variants stack: `hover:disabled:opacity-50`.",
+        "videoClip": "videos/css/css-tailwind-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "Dark Mode",
+        "text": "Enable dark mode by adding `darkMode: 'class'` to `tailwind.config.js`. Then toggle the `dark` class on the `<html>` element via JavaScript. Any class prefixed with `dark:` activates only when the `dark` class is present on a parent."
+      },
+      {
+        "animationStep": 2,
+        "heading": "group & peer — parent/sibling state",
+        "text": "Mark a parent with group to style children based on the parent's state. Mark a sibling with peer to style subsequent siblings. Both support named variants (group/item, peer/draft) for nested patterns. has: lets a parent react to its own descendants — e.g. highlight a label when its checkbox is checked."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "hover:bg-blue-600",
+          "note": "Background on hover"
+        },
+        {
+          "label": "focus:ring-2 focus:ring-blue-500",
+          "note": "Focus ring"
+        },
+        {
+          "label": "dark:bg-gray-900",
+          "note": "Dark mode background"
+        },
+        {
+          "label": "group-hover:opacity-100",
+          "note": "Child reacts to parent hover"
+        },
+        {
+          "label": "peer-checked:text-green-600",
+          "note": "Sibling reacts to checkbox state"
+        }
+      ],
+      "whenToUse": "Use state variants instead of JavaScript for pure CSS interactions. Use group/peer to wire up parent-to-child or sibling state changes without adding event listeners.",
+      "commonMistakes": [
+        "Using `group` without marking the parent element with the `group` class",
+        "Using `peer` on an element that follows the styled sibling — peer must come BEFORE the target in the DOM",
+        "Forgetting `darkMode: 'class'` in config — dark: variants have no effect without it"
+      ]
+    }
+  },
+  "css-tailwind-advanced": {
+    "title": "Tailwind: Advanced & v4",
+    "description": "Escape the design system with arbitrary values, organise styles with @layer, define custom tokens with @theme (v4), and build container-aware components.",
+    "steps": [
+      {
+        "animationStep": 0,
+        "heading": "Arbitrary Values",
+        "text": "When you need an exact value outside the design system, use square bracket syntax. Works on any utility: `w-[347px]`, `bg-[#1e1e2e]`, `grid-cols-[1fr_2fr]`. Use CSS variables: `bg-[var(--brand)]`. Use sparingly — prefer design tokens for consistency.",
+        "videoClip": "videos/css/css-tailwind-vid.mp4"
+      },
+      {
+        "animationStep": 1,
+        "heading": "@layer & @apply",
+        "text": "`@layer` organises your CSS into three buckets: `base` (global resets), `components` (reusable UI patterns), `utilities` (single-purpose classes). `@apply` composes Tailwind utilities into a custom class — useful when a pattern repeats across many elements."
+      },
+      {
+        "animationStep": 2,
+        "heading": "@theme — Custom Design Tokens (v4)",
+        "text": "Tailwind v4 replaces `tailwind.config.js` with a CSS-first approach. Define custom design tokens in `@theme` — Tailwind automatically generates matching utility classes. Use `--color-*` for colors, `--font-*` for fonts, `--breakpoint-*` for responsive variants."
+      },
+      {
+        "animationStep": 3,
+        "heading": "Container Queries",
+        "text": "Container queries let a component respond to its own container's size — not the viewport. Mark a parent with `@container`, then prefix child classes with `@sm:`, `@md:`, `@lg:`. Creates truly reusable components that adapt regardless of placement."
+      }
+    ],
+    "cheatSheet": {
+      "syntax": [
+        {
+          "label": "w-[347px]",
+          "note": "Arbitrary fixed width"
+        },
+        {
+          "label": "bg-[#1e1e2e]",
+          "note": "Arbitrary hex color"
+        },
+        {
+          "label": "@layer components { .btn { @apply ... } }",
+          "note": "Reusable component class"
+        },
+        {
+          "label": "@theme { --color-brand: #3b82f6; }",
+          "note": "Custom design token (v4)"
+        },
+        {
+          "label": "@container + @sm:",
+          "note": "Container query breakpoint"
+        }
+      ],
+      "whenToUse": "Use arbitrary values for one-off values that fall outside the design system. Use @layer/@apply for repeated UI patterns that need a named class. Use @theme (v4) as the single source of truth for design tokens.",
+      "commonMistakes": [
+        "Using tailwind.config.js in Tailwind v4 — v4 is CSS-first, use @theme instead",
+        "Overusing @apply — it defeats the purpose of utility-first and makes CSS harder to maintain",
+        "Forgetting spaces in arbitrary grid values — use underscore: `grid-cols-[1fr_2fr]` not `grid-cols-[1fr 2fr]`"
+      ]
+    }
+  }
+}

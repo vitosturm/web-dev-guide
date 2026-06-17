@@ -1,0 +1,110 @@
+# Git worktrees
+.worktrees/
+
+# Logs
+logs/
+*.log
+
+# Claude Code & MCP
+.claude/
+.playwright-mcp/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Screenshots & local dev images (root-level only)
+/*.png
+/*.jpg
+/*.jpeg
+/screens/
+
+# Local workspace folders (raw video sources, scratch data)
+/video-collection/
+/wbs_data/
+/.claire/
+/tmpfiles/
+
+# Build caches
+*.tsbuildinfo
+
+# yt-dlp cookie exports & stray downloads (contain live session cookies — never commit)
+/cookies-combined.txt
+/74230463-fc9a-4bf6-bf17-422a1f9d85cb.txt
+/86f702bd-07aa-48e5-97e4-194142d28797.txt
+/Packages
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.superpowers/
+.env
+
+# ===== Added for public publish: exclude Claude/AI tooling, secrets, deps =====
+# --- Claude / AI tooling ---
+CLAUDE.md
+.claude/
+.superpowers/
+docs/superpowers/
+.mcp.json
+.playwright-mcp/
+.codex/
+.copilot/
+.cursor/
+.aider*
+.agents/
+GEMINI.md
+AGENTS.md
+
+# --- Secrets / credentials ---
+.env
+.env.*
+!*.example
+*.pem
+*.key
+credentials*.json
+service-account*.json
+*token*.json
+
+# --- Large media (GitHub blocks >100MB) ---
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# --- Logs (may contain tokens / claude+mcp noise) ---
+*.log
+logs/
+
+# --- Databases ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Dependencies / build / caches ---
+node_modules/
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
